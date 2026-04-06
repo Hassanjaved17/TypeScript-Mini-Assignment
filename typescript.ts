@@ -7,7 +7,7 @@
 
 // ─── 1. PRIMITIVE TYPES ─────────────────────────────────────
 
-let studentName: string = "Ali Raza";
+let studentName: string = "Hassan Javed";
 let studentAge: number = 21;
 let isEnrolled: boolean = true;
 let uniqueId: null = null;
@@ -60,8 +60,8 @@ interface Student {
 
 const student1: Student = {
   id: 1,
-  name: "Ali Raza",
-  age: 21,
+  name: "Hassan Javed",
+  age: 20,
   enrolled: true,
   address: { city: "Karachi", country: "Pakistan" },
   courses: ["TypeScript", "React", "Node.js"],

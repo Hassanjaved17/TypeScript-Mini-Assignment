@@ -434,8 +434,8 @@ const TS_CODE = [
   { text: ``, id: null },
   { text: `// ─── 1. PRIMITIVE TYPES ─────────────────────────────────────`, cls: 'cmt', id: 'primitives' },
   { text: ``, id: null },
-  { text: `<kw>let</kw> studentName<op>:</op> <type>string</type>     <op>=</op> <str>"Ali Raza"</str>;` },
-  { text: `<kw>let</kw> studentAge<op>:</op>  <type>number</type>     <op>=</op> <num>21</num>;` },
+  { text: `<kw>let</kw> studentName<op>:</op> <type>string</type>     <op>=</op> <str>"Hassan Javed"</str>;` },
+  { text: `<kw>let</kw> studentAge<op>:</op>  <type>number</type>     <op>=</op> <num>20</num>;` },
   { text: `<kw>let</kw> isEnrolled<op>:</op>  <type>boolean</type>    <op>=</op> <bool>true</bool>;` },
   { text: `<kw>let</kw> uniqueId<op>:</op>    <type>null</type>       <op>=</op> <bool>null</bool>;` },
   { text: `<kw>let</kw> futureScore<op>:</op> <type>undefined</type>  <op>=</op> <bool>undefined</bool>;` },
@@ -474,7 +474,7 @@ const TS_CODE = [
   { text: `}` },
   { text: ``, id: null },
   { text: `<kw>const</kw> student1<op>:</op> <type>Student</type> <op>=</op> {` },
-  { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Ali Raza"</str>, age<op>:</op> <num>21</num>, enrolled<op>:</op> <bool>true</bool>,` },
+  { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Hassan Javed"</str>, age<op>:</op> <num>20</num>, enrolled<op>:</op> <bool>true</bool>,` },
   { text: `  address<op>:</op> { city<op>:</op> <str>"Karachi"</str>, country<op>:</op> <str>"Pakistan"</str> },` },
   { text: `  courses<op>:</op> [<str>"TypeScript"</str>, <str>"React"</str>, <str>"Node.js"</str>], grade<op>:</op> <str>"A"</str>` },
   { text: `};` },
@@ -519,8 +519,8 @@ const JS_CODE = [
   { text: `<span class="cmt">// COMPILED JavaScript — types erased, logic preserved</span>`, id: null },
   { text: ``, id: null },
   { text: `<span class="cmt">// ─── Primitives (no type annotations)</span>`, id: 'primitives' },
-  { text: `<kw>let</kw> studentName <op>=</op> <str>"Ali Raza"</str>;` },
-  { text: `<kw>let</kw> studentAge  <op>=</op> <num>21</num>;` },
+  { text: `<kw>let</kw> studentName <op>=</op> <str>"Hassan Javed"</str>;` },
+  { text: `<kw>let</kw> studentAge  <op>=</op> <num>20</num>;` },
   { text: `<kw>let</kw> isEnrolled  <op>=</op> <bool>true</bool>;` },
   { text: `<kw>let</kw> uniqueId    <op>=</op> <bool>null</bool>;` },
   { text: ``, id: null },
@@ -529,7 +529,7 @@ const JS_CODE = [
   { text: ``, id: null },
   { text: `<span class="cmt">// ─── No interface keyword — just a plain object</span>`, id: 'interfaces' },
   { text: `<kw>const</kw> student1 <op>=</op> {` },
-  { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Ali Raza"</str>, age<op>:</op> <num>21</num>, enrolled<op>:</op> <bool>true</bool>,` },
+  { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Hassan Javed"</str>, age<op>:</op> <num>20</num>, enrolled<op>:</op> <bool>true</bool>,` },
   { text: `  address<op>:</op> { city<op>:</op> <str>"Karachi"</str>, country<op>:</op> <str>"Pakistan"</str> },` },
   { text: `  courses<op>:</op> [<str>"TypeScript"</str>, <str>"React"</str>, <str>"Node.js"</str>], grade<op>:</op> <str>"A"</str>` },
   { text: `};` },
@@ -655,8 +655,8 @@ function runCode() {
   // ── Execute the actual assignment code ──
 
   // Primitives
-  let studentName = "Ali Raza";
-  let studentAge = 21;
+  let studentName = "Hassan Javed";
+  let studentAge = 20;
   let isEnrolled = true;
   let uniqueId = null;
   let futureScore = undefined;
@@ -675,7 +675,7 @@ function runCode() {
 
   // Interface
   const student1 = {
-    id: 1, name: "Ali Raza", age: 21, enrolled: true,
+    id: 1, name: "Hassan Javed", age: 20, enrolled: true,
     address: { city: "Karachi", country: "Pakistan" },
     courses: ["TypeScript", "React", "Node.js"], grade: "A"
   };
