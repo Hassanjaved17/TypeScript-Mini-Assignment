@@ -6,7 +6,7 @@
 // ============================================================
 // ─── 1. PRIMITIVE TYPES ─────────────────────────────────────
 let studentName = "Hassan Javed";
-let studentAge = 21;
+let studentAge = 20;
 let isEnrolled = true;
 let uniqueId = null;
 let futureScore = undefined;

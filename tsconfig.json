@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": true,
+    "outDir": "./",
+    "rootDir": "./",
+    "removeComments": false
+  },
+  "include": ["assignment.ts"],
+  "exclude": ["node_modules"]
+}

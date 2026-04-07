@@ -8,7 +8,7 @@
 // ─── 1. PRIMITIVE TYPES ─────────────────────────────────────
 
 let studentName: string = "Hassan Javed";
-let studentAge: number = 21;
+let studentAge: number = 20;
 let isEnrolled: boolean = true;
 let uniqueId: null = null;
 let futureScore: undefined = undefined;
