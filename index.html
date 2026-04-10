@@ -1,739 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TypeScript Assignment Playground</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --bg: #0d0f18;
-    --panel: #13161f;
-    --border: #1e2235;
-    --accent: #7c6dfa;
-    --accent2: #3ecfcf;
-    --accent3: #f5a623;
-    --text: #e2e4f0;
-    --muted: #5a5f7a;
-    --green: #4ade80;
-    --red: #f87171;
-    --blue: #60a5fa;
-    --purple: #c084fc;
-    --orange: #fb923c;
-    --yellow: #fbbf24;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    padding: 0;
-    overflow-x: hidden;
-  }
-
-  /* ── HEADER ── */
-  header {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 18px 32px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(12px);
-  }
-
-  .ts-badge {
-    background: var(--accent);
-    color: #fff;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 6px;
-    letter-spacing: 1px;
-  }
-
-  header h1 {
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
-
-  header span {
-    color: var(--muted);
-    font-size: 13px;
-    margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* ── LAYOUT ── */
-  .main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    height: calc(100vh - 61px);
-  }
-
-  /* ── TABS ── */
-  .tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-  }
-
-  .tab {
-    padding: 10px 20px;
-    font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all .2s;
-    letter-spacing: .5px;
-  }
-
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab:hover:not(.active) { color: var(--text); }
-
-  /* ── CODE PANEL ── */
-  .code-panel {
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .code-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px;
-    background: var(--bg);
-  }
-
-  pre {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.5px;
-    line-height: 1.85;
-    white-space: pre;
-    counter-reset: line;
-  }
-
-  .code-line {
-    display: flex;
-    counter-increment: line;
-  }
-
-  .code-line::before {
-    content: counter(line);
-    min-width: 36px;
-    color: var(--muted);
-    text-align: right;
-    margin-right: 20px;
-    user-select: none;
-    opacity: .5;
-    font-size: 11px;
-    padding-top: 1px;
-  }
-
-  .code-line:hover { background: rgba(124,109,250,.05); border-radius: 4px; }
-
-  /* ── SYNTAX TOKENS ── */
-  .kw   { color: var(--purple); }
-  .type { color: var(--accent2); }
-  .str  { color: var(--green); }
-  .num  { color: var(--orange); }
-  .fn   { color: var(--blue); }
-  .cmt  { color: var(--muted); font-style: italic; }
-  .key  { color: var(--accent2); }
-  .bool { color: var(--orange); }
-  .op   { color: var(--accent); }
-
-  /* ── RIGHT: CONCEPTS + CONSOLE ── */
-  .right-panel {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* ── CONCEPT CARDS ── */
-  .concepts {
-    padding: 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-    overflow-y: auto;
-    max-height: 280px;
-  }
-
-  .concepts-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    cursor: pointer;
-    transition: all .2s;
-    min-width: 130px;
-  }
-
-  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .card.active { border-color: var(--accent); background: rgba(124,109,250,.08); }
-
-  .card-icon { font-size: 18px; margin-bottom: 4px; }
-  .card-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: .5px;
-  }
-  .card-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
-
-  /* ── CONSOLE ── */
-  .console-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: #090b12;
-  }
-
-  .console-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 18px;
-    background: var(--panel);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .console-header span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .dot-red { background: #f87171; }
-  .dot-yellow { background: #fbbf24; }
-  .dot-green { background: #4ade80; }
-
-  .run-btn {
-    margin-left: auto;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 7px;
-    padding: 6px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: .5px;
-    transition: all .2s;
-  }
-
-  .run-btn:hover { background: #6a5ce8; transform: scale(1.04); }
-  .run-btn:active { transform: scale(.97); }
-
-  .clear-btn {
-    background: transparent;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 6px 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all .2s;
-    margin-left: 8px;
-  }
-  .clear-btn:hover { color: var(--text); border-color: var(--muted); }
-
-  .console-output {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    line-height: 2;
-  }
-
-  .log-section {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 11px;
-    letter-spacing: 1px;
-    margin: 10px 0 2px;
-    padding: 4px 8px;
-    background: rgba(124,109,250,.08);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 4px 4px 0;
-  }
-
-  .log-line { color: var(--text); padding: 1px 0; }
-  .log-key  { color: var(--accent2); }
-  .log-str  { color: var(--green); }
-  .log-num  { color: var(--orange); }
-  .log-bool { color: var(--yellow); }
-  .log-null { color: var(--muted); }
-
-  .prompt { color: var(--muted); user-select: none; margin-right: 8px; }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-
-  /* ── SECTION HIGHLIGHT ── */
-  .section-banner {
-    padding: 8px 24px 4px;
-    font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
-    margin-top: 8px;
-  }
-
-  /* ── COMPILE STEPS ── */
-  .compile-steps {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 18px;
-    font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--muted);
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-  }
-  .step { display: flex; align-items: center; gap: 4px; }
-  .step-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
-  .step.done .step-dot { background: var(--green); }
-  .arrow { color: var(--border); }
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeScript Assignment Playground</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header>
-  <div class="ts-badge">TS</div>
-  <h1>TypeScript Assignment Playground</h1>
-  <span>assignment.ts → tsc → assignment.js → Chrome</span>
-</header>
+  <header>
+    <div class="ts-badge">TS</div>
+    <h1>TypeScript Assignment Playground</h1>
+    <span>assignment.ts → tsc → assignment.js → Chrome</span>
+  </header>
 
-<div class="main">
+  <div class="main">
 
-  <!-- LEFT: CODE VIEWER -->
-  <div class="code-panel">
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('ts')">📘 assignment.ts</div>
-      <div class="tab" onclick="switchTab('js')">📒 assignment.js (compiled)</div>
+    <!-- LEFT: CODE VIEWER -->
+    <div class="code-panel">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('ts')">📘 assignment.ts</div>
+        <div class="tab" onclick="switchTab('js')">📒 assignment.js (compiled)</div>
+      </div>
+      <div class="compile-steps" id="compileSteps">
+        <div class="step done" id="s1">
+          <div class="step-dot"></div>Write TS
+        </div>
+        <div class="arrow">→</div>
+        <div class="step" id="s2">
+          <div class="step-dot"></div>tsc compile
+        </div>
+        <div class="arrow">→</div>
+        <div class="step" id="s3">
+          <div class="step-dot"></div>JS output
+        </div>
+        <div class="arrow">→</div>
+        <div class="step" id="s4">
+          <div class="step-dot"></div>Run in Chrome
+        </div>
+      </div>
+      <div class="code-scroll" id="codeScroll"></div>
     </div>
-    <div class="compile-steps" id="compileSteps">
-      <div class="step done" id="s1"><div class="step-dot"></div>Write TS</div>
-      <div class="arrow">→</div>
-      <div class="step" id="s2"><div class="step-dot"></div>tsc compile</div>
-      <div class="arrow">→</div>
-      <div class="step" id="s3"><div class="step-dot"></div>JS output</div>
-      <div class="arrow">→</div>
-      <div class="step" id="s4"><div class="step-dot"></div>Run in Chrome</div>
+
+    <!-- RIGHT: CONCEPTS + CONSOLE -->
+    <div class="right-panel">
+      <div class="concepts">
+        <div class="concepts-title">Concepts Covered — Click to Jump</div>
+        <div class="cards">
+          <div class="card active" onclick="jumpTo('primitives')">
+            <div class="card-icon">🔢</div>
+            <div class="card-label">Primitive Types</div>
+            <div class="card-sub">string · number · boolean · null · undefined</div>
+          </div>
+          <div class="card" onclick="jumpTo('types')">
+            <div class="card-icon">🏷️</div>
+            <div class="card-label">Type Aliases</div>
+            <div class="card-sub">type · union · literal</div>
+          </div>
+          <div class="card" onclick="jumpTo('interfaces')">
+            <div class="card-icon">📐</div>
+            <div class="card-label">Interfaces</div>
+            <div class="card-sub">interface · nested · optional ?</div>
+          </div>
+          <div class="card" onclick="jumpTo('arrays')">
+            <div class="card-icon">📋</div>
+            <div class="card-label">Arrays</div>
+            <div class="card-sub">T[] · Array&lt;T&gt; · typed elements</div>
+          </div>
+          <div class="card" onclick="jumpTo('objects')">
+            <div class="card-icon">📦</div>
+            <div class="card-label">Objects</div>
+            <div class="card-sub">inline shape · typed properties</div>
+          </div>
+          <div class="card" onclick="jumpTo('functions')">
+            <div class="card-icon">⚙️</div>
+            <div class="card-label">Functions</div>
+            <div class="card-sub">params · return · generics · void</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="console-area">
+        <div class="console-header">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+          <span>Console Output</span>
+          <button class="run-btn" onclick="runCode()">▶ Run Code</button>
+          <button class="clear-btn" onclick="clearConsole()">Clear</button>
+        </div>
+        <div class="console-output" id="consoleOutput">
+          <div style="color:var(--muted);font-size:11px;padding:8px 0;">Click ▶ Run Code to execute the compiled
+            JavaScript in Chrome...</div>
+        </div>
+      </div>
     </div>
-    <div class="code-scroll" id="codeScroll"></div>
+
   </div>
 
-  <!-- RIGHT: CONCEPTS + CONSOLE -->
-  <div class="right-panel">
-    <div class="concepts">
-      <div class="concepts-title">Concepts Covered — Click to Jump</div>
-      <div class="cards">
-        <div class="card active" onclick="jumpTo('primitives')">
-          <div class="card-icon">🔢</div>
-          <div class="card-label">Primitive Types</div>
-          <div class="card-sub">string · number · boolean · null · undefined</div>
-        </div>
-        <div class="card" onclick="jumpTo('types')">
-          <div class="card-icon">🏷️</div>
-          <div class="card-label">Type Aliases</div>
-          <div class="card-sub">type · union · literal</div>
-        </div>
-        <div class="card" onclick="jumpTo('interfaces')">
-          <div class="card-icon">📐</div>
-          <div class="card-label">Interfaces</div>
-          <div class="card-sub">interface · nested · optional ?</div>
-        </div>
-        <div class="card" onclick="jumpTo('arrays')">
-          <div class="card-icon">📋</div>
-          <div class="card-label">Arrays</div>
-          <div class="card-sub">T[] · Array&lt;T&gt; · typed elements</div>
-        </div>
-        <div class="card" onclick="jumpTo('objects')">
-          <div class="card-icon">📦</div>
-          <div class="card-label">Objects</div>
-          <div class="card-sub">inline shape · typed properties</div>
-        </div>
-        <div class="card" onclick="jumpTo('functions')">
-          <div class="card-icon">⚙️</div>
-          <div class="card-label">Functions</div>
-          <div class="card-sub">params · return · generics · void</div>
-        </div>
-      </div>
-    </div>
+  <script>
+    // ── CODE CONTENT ──────────────────────────────────────────────
 
-    <div class="console-area">
-      <div class="console-header">
-        <div class="dot dot-red"></div>
-        <div class="dot dot-yellow"></div>
-        <div class="dot dot-green"></div>
-        <span>Console Output</span>
-        <button class="run-btn" onclick="runCode()">▶ Run Code</button>
-        <button class="clear-btn" onclick="clearConsole()">Clear</button>
-      </div>
-      <div class="console-output" id="consoleOutput">
-        <div style="color:var(--muted);font-size:11px;padding:8px 0;">Click ▶ Run Code to execute the compiled JavaScript in Chrome...</div>
-      </div>
-    </div>
-  </div>
+    const TS_CODE = [
+      { text: `// ============================================================`, cls: 'cmt', id: null },
+      { text: `//  TypeScript Mini Assignment`, cls: 'cmt', id: null },
+      { text: `//  Covers: Primitive Types, Type Aliases, Interfaces,`, cls: 'cmt', id: null },
+      { text: `//          Arrays, Objects, Functions with Strong Types`, cls: 'cmt', id: null },
+      { text: `// ============================================================`, cls: 'cmt', id: null },
+      { text: ``, id: null },
+      { text: `// ─── 1. PRIMITIVE TYPES ─────────────────────────────────────`, cls: 'cmt', id: 'primitives' },
+      { text: ``, id: null },
+      { text: `<kw>let</kw> studentName<op>:</op> <type>string</type>     <op>=</op> <str>"Hassan Javed"</str>;` },
+      { text: `<kw>let</kw> studentAge<op>:</op>  <type>number</type>     <op>=</op> <num>20</num>;` },
+      { text: `<kw>let</kw> isEnrolled<op>:</op>  <type>boolean</type>    <op>=</op> <bool>true</bool>;` },
+      { text: `<kw>let</kw> uniqueId<op>:</op>    <type>null</type>       <op>=</op> <bool>null</bool>;` },
+      { text: `<kw>let</kw> futureScore<op>:</op> <type>undefined</type>  <op>=</op> <bool>undefined</bool>;` },
+      { text: ``, id: null },
+      { text: `// ─── 2. TYPE ALIASES ────────────────────────────────────────`, cls: 'cmt', id: 'types' },
+      { text: ``, id: null },
+      { text: `<kw>type</kw> <type>Grade</type>    <op>=</op> <str>"A"</str> <op>|</op> <str>"B"</str> <op>|</op> <str>"C"</str> <op>|</op> <str>"D"</str> <op>|</op> <str>"F"</str>;` },
+      { text: `<kw>type</kw> <type>CourseID</type> <op>=</op> <type>string</type>;` },
+      { text: `<kw>type</kw> <type>Score</type>    <op>=</op> <type>number</type>;` },
+      { text: ``, id: null },
+      { text: `<kw>type</kw> <type>Result</type> <op>=</op> {` },
+      { text: `  course<op>:</op> <type>CourseID</type>;` },
+      { text: `  score<op>:</op>  <type>Score</type>;` },
+      { text: `  grade<op>:</op>  <type>Grade</type>;` },
+      { text: `};` },
+      { text: ``, id: null },
+      { text: `<kw>const</kw> myResult<op>:</op> <type>Result</type> <op>=</op> {` },
+      { text: `  course<op>:</op> <str>"TS-101"</str>, score<op>:</op> <num>88</num>, grade<op>:</op> <str>"A"</str>` },
+      { text: `};` },
+      { text: ``, id: null },
+      { text: `// ─── 3. INTERFACES ──────────────────────────────────────────`, cls: 'cmt', id: 'interfaces' },
+      { text: ``, id: null },
+      { text: `<kw>interface</kw> <type>Address</type> {` },
+      { text: `  city<op>:</op>    <type>string</type>;` },
+      { text: `  country<op>:</op> <type>string</type>;` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>interface</kw> <type>Student</type> {` },
+      { text: `  id<op>:</op>       <type>number</type>;` },
+      { text: `  name<op>:</op>     <type>string</type>;` },
+      { text: `  age<op>:</op>      <type>number</type>;` },
+      { text: `  enrolled<op>:</op> <type>boolean</type>;` },
+      { text: `  address<op>:</op>  <type>Address</type>;       <span class="cmt">// nested interface</span>` },
+      { text: `  courses<op>:</op>  <type>string</type>[];      <span class="cmt">// array inside interface</span>` },
+      { text: `  grade<op>?:</op>   <type>Grade</type>;         <span class="cmt">// optional property</span>` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>const</kw> student1<op>:</op> <type>Student</type> <op>=</op> {` },
+      { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Hassan Javed"</str>, age<op>:</op> <num>20</num>, enrolled<op>:</op> <bool>true</bool>,` },
+      { text: `  address<op>:</op> { city<op>:</op> <str>"Karachi"</str>, country<op>:</op> <str>"Pakistan"</str> },` },
+      { text: `  courses<op>:</op> [<str>"TypeScript"</str>, <str>"React"</str>, <str>"Node.js"</str>], grade<op>:</op> <str>"A"</str>` },
+      { text: `};` },
+      { text: ``, id: null },
+      { text: `// ─── 4. ARRAYS ──────────────────────────────────────────────`, cls: 'cmt', id: 'arrays' },
+      { text: ``, id: null },
+      { text: `<kw>const</kw> scores<op>:</op>   <type>number</type>[]          <op>=</op> [<num>85</num>, <num>92</num>, <num>78</num>, <num>95</num>, <num>88</num>];` },
+      { text: `<kw>const</kw> subjects<op>:</kw> <type>Array</type>&lt;<type>string</type>&gt;     <op>=</op> [<str>"Math"</str>, <str>"English"</str>, <str>"Physics"</str>];` },
+      { text: `<kw>const</kw> results<op>:</op>  <type>Result</type>[]          <op>=</op> [...];` },
+      { text: ``, id: null },
+      { text: `// ─── 5. OBJECTS ─────────────────────────────────────────────`, cls: 'cmt', id: 'objects' },
+      { text: ``, id: null },
+      { text: `<kw>const</kw> course<op>:</op> { id<op>:</op> <type>CourseID</type>; title<op>:</op> <type>string</type>; credits<op>:</op> <type>number</type> } <op>=</op> {` },
+      { text: `  id<op>:</op> <str>"TS-101"</str>, title<op>:</op> <str>"TypeScript Fundamentals"</str>, credits<op>:</op> <num>3</num>` },
+      { text: `};` },
+      { text: ``, id: null },
+      { text: `// ─── 6. FUNCTIONS ───────────────────────────────────────────`, cls: 'cmt', id: 'functions' },
+      { text: ``, id: null },
+      { text: `<kw>function</kw> <fn>greetStudent</fn>(name<op>:</op> <type>string</type>, age<op>:</op> <type>number</type>)<op>:</op> <type>string</type> {` },
+      { text: `  <kw>return</kw> <str>\`Hello, \${</str>name<str>}! You are \${</str>age<str>} years old.\`</str>;` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>const</kw> <fn>calculateAverage</fn> <op>=</op> (nums<op>:</op> <type>number</type>[])<op>:</op> <type>number</type> <op>=></op> {` },
+      { text: `  <kw>const</kw> total <op>=</op> nums.<fn>reduce</fn>((sum, n) <op>=></op> sum <op>+</op> n, <num>0</num>);` },
+      { text: `  <kw>return</kw> <fn>parseFloat</fn>((total <op>/</op> nums.length).<fn>toFixed</fn>(<num>2</num>));` },
+      { text: `};` },
+      { text: ``, id: null },
+      { text: `<kw>function</kw> <fn>printStudent</fn>(s<op>:</op> <type>Student</type>)<op>:</op> <type>void</type> {` },
+      { text: `  console.<fn>log</fn>(<str>\`[\${</str>s.id<str>}] \${</str>s.name<str>} | City: \${</str>s.address.city<str>}\`</str>);` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>function</kw> <fn>getFirstItem</fn>&lt;<type>T</type>&gt;(arr<op>:</op> <type>T</type>[])<op>:</op> <type>T</type> {   <span class="cmt">// Generic</span>` },
+      { text: `  <kw>return</kw> arr[<num>0</num>];` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>function</kw> <fn>enrollStudent</fn>(name<op>:</op> <type>string</type>, course<op>:</op> <type>string</type> <op>=</op> <str>"General"</str>)<op>:</op> <type>string</type> {` },
+      { text: `  <kw>return</kw> <str>\`\${</str>name<str>} enrolled in \${</str>course<str>}\`</str>;` },
+      { text: `}` },
+    ];
 
-</div>
+    const JS_CODE = [
+      { text: `<span class="cmt">// COMPILED JavaScript — types erased, logic preserved</span>`, id: null },
+      { text: ``, id: null },
+      { text: `<span class="cmt">// ─── Primitives (no type annotations)</span>`, id: 'primitives' },
+      { text: `<kw>let</kw> studentName <op>=</op> <str>"Hassan Javed"</str>;` },
+      { text: `<kw>let</kw> studentAge  <op>=</op> <num>20</num>;` },
+      { text: `<kw>let</kw> isEnrolled  <op>=</op> <bool>true</bool>;` },
+      { text: `<kw>let</kw> uniqueId    <op>=</op> <bool>null</bool>;` },
+      { text: ``, id: null },
+      { text: `<span class="cmt">// ─── Type alias & interface erased — only values remain</span>`, id: 'types' },
+      { text: `<kw>const</kw> myResult <op>=</op> { course<op>:</op> <str>"TS-101"</str>, score<op>:</op> <num>88</num>, grade<op>:</op> <str>"A"</str> };` },
+      { text: ``, id: null },
+      { text: `<span class="cmt">// ─── No interface keyword — just a plain object</span>`, id: 'interfaces' },
+      { text: `<kw>const</kw> student1 <op>=</op> {` },
+      { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Hassan Javed"</str>, age<op>:</op> <num>20</num>, enrolled<op>:</op> <bool>true</bool>,` },
+      { text: `  address<op>:</op> { city<op>:</op> <str>"Karachi"</str>, country<op>:</op> <str>"Pakistan"</str> },` },
+      { text: `  courses<op>:</op> [<str>"TypeScript"</str>, <str>"React"</str>, <str>"Node.js"</str>], grade<op>:</op> <str>"A"</str>` },
+      { text: `};` },
+      { text: ``, id: null },
+      { text: `<span class="cmt">// ─── Arrays — same syntax, no type annotations</span>`, id: 'arrays' },
+      { text: `<kw>const</kw> scores   <op>=</op> [<num>85</num>, <num>92</num>, <num>78</num>, <num>95</num>, <num>88</num>];` },
+      { text: `<kw>const</kw> subjects <op>=</op> [<str>"Math"</str>, <str>"English"</str>, <str>"Physics"</str>];` },
+      { text: ``, id: null },
+      { text: `<span class="cmt">// ─── Functions — no return types or param types</span>`, id: 'functions' },
+      { text: `<kw>function</kw> <fn>greetStudent</fn>(name, age) {` },
+      { text: `  <kw>return</kw> <str>\`Hello, \${</str>name<str>}! You are \${</str>age<str>} years old.\`</str>;` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>const</kw> <fn>calculateAverage</fn> <op>=</op> (nums) <op>=></op> {` },
+      { text: `  <kw>const</kw> total <op>=</op> nums.<fn>reduce</fn>((sum, n) <op>=></op> sum <op>+</op> n, <num>0</num>);` },
+      { text: `  <kw>return</kw> <fn>parseFloat</fn>((total <op>/</op> nums.length).<fn>toFixed</fn>(<num>2</num>));` },
+      { text: `};` },
+      { text: ``, id: null },
+      { text: `<kw>function</kw> <fn>printStudent</fn>(s) {` },
+      { text: `  console.<fn>log</fn>(<str>\`[\${</str>s.id<str>}] \${</str>s.name<str>} | City: \${</str>s.address.city<str>}\`</str>);` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>function</kw> <fn>getFirstItem</fn>(arr) {   <span class="cmt">// Generic T erased</span>` },
+      { text: `  <kw>return</kw> arr[<num>0</num>];` },
+      { text: `}` },
+      { text: ``, id: null },
+      { text: `<kw>function</kw> <fn>enrollStudent</fn>(name, course <op>=</op> <str>"General"</str>) {` },
+      { text: `  <kw>return</kw> <str>\`\${</str>name<str>} enrolled in \${</str>course<str>}\`</str>;` },
+      { text: `}` },
+    ];
 
-<script>
-// ── CODE CONTENT ──────────────────────────────────────────────
+    // ── TAB SWITCHING ──────────────────────────────────────────────
 
-const TS_CODE = [
-  { text: `// ============================================================`, cls: 'cmt', id: null },
-  { text: `//  TypeScript Mini Assignment`, cls: 'cmt', id: null },
-  { text: `//  Covers: Primitive Types, Type Aliases, Interfaces,`, cls: 'cmt', id: null },
-  { text: `//          Arrays, Objects, Functions with Strong Types`, cls: 'cmt', id: null },
-  { text: `// ============================================================`, cls: 'cmt', id: null },
-  { text: ``, id: null },
-  { text: `// ─── 1. PRIMITIVE TYPES ─────────────────────────────────────`, cls: 'cmt', id: 'primitives' },
-  { text: ``, id: null },
-  { text: `<kw>let</kw> studentName<op>:</op> <type>string</type>     <op>=</op> <str>"Hassan Javed"</str>;` },
-  { text: `<kw>let</kw> studentAge<op>:</op>  <type>number</type>     <op>=</op> <num>20</num>;` },
-  { text: `<kw>let</kw> isEnrolled<op>:</op>  <type>boolean</type>    <op>=</op> <bool>true</bool>;` },
-  { text: `<kw>let</kw> uniqueId<op>:</op>    <type>null</type>       <op>=</op> <bool>null</bool>;` },
-  { text: `<kw>let</kw> futureScore<op>:</op> <type>undefined</type>  <op>=</op> <bool>undefined</bool>;` },
-  { text: ``, id: null },
-  { text: `// ─── 2. TYPE ALIASES ────────────────────────────────────────`, cls: 'cmt', id: 'types' },
-  { text: ``, id: null },
-  { text: `<kw>type</kw> <type>Grade</type>    <op>=</op> <str>"A"</str> <op>|</op> <str>"B"</str> <op>|</op> <str>"C"</str> <op>|</op> <str>"D"</str> <op>|</op> <str>"F"</str>;` },
-  { text: `<kw>type</kw> <type>CourseID</type> <op>=</op> <type>string</type>;` },
-  { text: `<kw>type</kw> <type>Score</type>    <op>=</op> <type>number</type>;` },
-  { text: ``, id: null },
-  { text: `<kw>type</kw> <type>Result</type> <op>=</op> {` },
-  { text: `  course<op>:</op> <type>CourseID</type>;` },
-  { text: `  score<op>:</op>  <type>Score</type>;` },
-  { text: `  grade<op>:</op>  <type>Grade</type>;` },
-  { text: `};` },
-  { text: ``, id: null },
-  { text: `<kw>const</kw> myResult<op>:</op> <type>Result</type> <op>=</op> {` },
-  { text: `  course<op>:</op> <str>"TS-101"</str>, score<op>:</op> <num>88</num>, grade<op>:</op> <str>"A"</str>` },
-  { text: `};` },
-  { text: ``, id: null },
-  { text: `// ─── 3. INTERFACES ──────────────────────────────────────────`, cls: 'cmt', id: 'interfaces' },
-  { text: ``, id: null },
-  { text: `<kw>interface</kw> <type>Address</type> {` },
-  { text: `  city<op>:</op>    <type>string</type>;` },
-  { text: `  country<op>:</op> <type>string</type>;` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>interface</kw> <type>Student</type> {` },
-  { text: `  id<op>:</op>       <type>number</type>;` },
-  { text: `  name<op>:</op>     <type>string</type>;` },
-  { text: `  age<op>:</op>      <type>number</type>;` },
-  { text: `  enrolled<op>:</op> <type>boolean</type>;` },
-  { text: `  address<op>:</op>  <type>Address</type>;       <span class="cmt">// nested interface</span>` },
-  { text: `  courses<op>:</op>  <type>string</type>[];      <span class="cmt">// array inside interface</span>` },
-  { text: `  grade<op>?:</op>   <type>Grade</type>;         <span class="cmt">// optional property</span>` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>const</kw> student1<op>:</op> <type>Student</type> <op>=</op> {` },
-  { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Hassan Javed"</str>, age<op>:</op> <num>20</num>, enrolled<op>:</op> <bool>true</bool>,` },
-  { text: `  address<op>:</op> { city<op>:</op> <str>"Karachi"</str>, country<op>:</op> <str>"Pakistan"</str> },` },
-  { text: `  courses<op>:</op> [<str>"TypeScript"</str>, <str>"React"</str>, <str>"Node.js"</str>], grade<op>:</op> <str>"A"</str>` },
-  { text: `};` },
-  { text: ``, id: null },
-  { text: `// ─── 4. ARRAYS ──────────────────────────────────────────────`, cls: 'cmt', id: 'arrays' },
-  { text: ``, id: null },
-  { text: `<kw>const</kw> scores<op>:</op>   <type>number</type>[]          <op>=</op> [<num>85</num>, <num>92</num>, <num>78</num>, <num>95</num>, <num>88</num>];` },
-  { text: `<kw>const</kw> subjects<op>:</kw> <type>Array</type>&lt;<type>string</type>&gt;     <op>=</op> [<str>"Math"</str>, <str>"English"</str>, <str>"Physics"</str>];` },
-  { text: `<kw>const</kw> results<op>:</op>  <type>Result</type>[]          <op>=</op> [...];` },
-  { text: ``, id: null },
-  { text: `// ─── 5. OBJECTS ─────────────────────────────────────────────`, cls: 'cmt', id: 'objects' },
-  { text: ``, id: null },
-  { text: `<kw>const</kw> course<op>:</op> { id<op>:</op> <type>CourseID</type>; title<op>:</op> <type>string</type>; credits<op>:</op> <type>number</type> } <op>=</op> {` },
-  { text: `  id<op>:</op> <str>"TS-101"</str>, title<op>:</op> <str>"TypeScript Fundamentals"</str>, credits<op>:</op> <num>3</num>` },
-  { text: `};` },
-  { text: ``, id: null },
-  { text: `// ─── 6. FUNCTIONS ───────────────────────────────────────────`, cls: 'cmt', id: 'functions' },
-  { text: ``, id: null },
-  { text: `<kw>function</kw> <fn>greetStudent</fn>(name<op>:</op> <type>string</type>, age<op>:</op> <type>number</type>)<op>:</op> <type>string</type> {` },
-  { text: `  <kw>return</kw> <str>\`Hello, \${</str>name<str>}! You are \${</str>age<str>} years old.\`</str>;` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>const</kw> <fn>calculateAverage</fn> <op>=</op> (nums<op>:</op> <type>number</type>[])<op>:</op> <type>number</type> <op>=></op> {` },
-  { text: `  <kw>const</kw> total <op>=</op> nums.<fn>reduce</fn>((sum, n) <op>=></op> sum <op>+</op> n, <num>0</num>);` },
-  { text: `  <kw>return</kw> <fn>parseFloat</fn>((total <op>/</op> nums.length).<fn>toFixed</fn>(<num>2</num>));` },
-  { text: `};` },
-  { text: ``, id: null },
-  { text: `<kw>function</kw> <fn>printStudent</fn>(s<op>:</op> <type>Student</type>)<op>:</op> <type>void</type> {` },
-  { text: `  console.<fn>log</fn>(<str>\`[\${</str>s.id<str>}] \${</str>s.name<str>} | City: \${</str>s.address.city<str>}\`</str>);` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>function</kw> <fn>getFirstItem</fn>&lt;<type>T</type>&gt;(arr<op>:</op> <type>T</type>[])<op>:</op> <type>T</type> {   <span class="cmt">// Generic</span>` },
-  { text: `  <kw>return</kw> arr[<num>0</num>];` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>function</kw> <fn>enrollStudent</fn>(name<op>:</op> <type>string</type>, course<op>:</op> <type>string</type> <op>=</op> <str>"General"</str>)<op>:</op> <type>string</type> {` },
-  { text: `  <kw>return</kw> <str>\`\${</str>name<str>} enrolled in \${</str>course<str>}\`</str>;` },
-  { text: `}` },
-];
+    let currentTab = 'ts';
+    const lineIds = {};
 
-const JS_CODE = [
-  { text: `<span class="cmt">// COMPILED JavaScript — types erased, logic preserved</span>`, id: null },
-  { text: ``, id: null },
-  { text: `<span class="cmt">// ─── Primitives (no type annotations)</span>`, id: 'primitives' },
-  { text: `<kw>let</kw> studentName <op>=</op> <str>"Hassan Javed"</str>;` },
-  { text: `<kw>let</kw> studentAge  <op>=</op> <num>20</num>;` },
-  { text: `<kw>let</kw> isEnrolled  <op>=</op> <bool>true</bool>;` },
-  { text: `<kw>let</kw> uniqueId    <op>=</op> <bool>null</bool>;` },
-  { text: ``, id: null },
-  { text: `<span class="cmt">// ─── Type alias & interface erased — only values remain</span>`, id: 'types' },
-  { text: `<kw>const</kw> myResult <op>=</op> { course<op>:</op> <str>"TS-101"</str>, score<op>:</op> <num>88</num>, grade<op>:</op> <str>"A"</str> };` },
-  { text: ``, id: null },
-  { text: `<span class="cmt">// ─── No interface keyword — just a plain object</span>`, id: 'interfaces' },
-  { text: `<kw>const</kw> student1 <op>=</op> {` },
-  { text: `  id<op>:</op> <num>1</num>, name<op>:</op> <str>"Hassan Javed"</str>, age<op>:</op> <num>20</num>, enrolled<op>:</op> <bool>true</bool>,` },
-  { text: `  address<op>:</op> { city<op>:</op> <str>"Karachi"</str>, country<op>:</op> <str>"Pakistan"</str> },` },
-  { text: `  courses<op>:</op> [<str>"TypeScript"</str>, <str>"React"</str>, <str>"Node.js"</str>], grade<op>:</op> <str>"A"</str>` },
-  { text: `};` },
-  { text: ``, id: null },
-  { text: `<span class="cmt">// ─── Arrays — same syntax, no type annotations</span>`, id: 'arrays' },
-  { text: `<kw>const</kw> scores   <op>=</op> [<num>85</num>, <num>92</num>, <num>78</num>, <num>95</num>, <num>88</num>];` },
-  { text: `<kw>const</kw> subjects <op>=</op> [<str>"Math"</str>, <str>"English"</str>, <str>"Physics"</str>];` },
-  { text: ``, id: null },
-  { text: `<span class="cmt">// ─── Functions — no return types or param types</span>`, id: 'functions' },
-  { text: `<kw>function</kw> <fn>greetStudent</fn>(name, age) {` },
-  { text: `  <kw>return</kw> <str>\`Hello, \${</str>name<str>}! You are \${</str>age<str>} years old.\`</str>;` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>const</kw> <fn>calculateAverage</fn> <op>=</op> (nums) <op>=></op> {` },
-  { text: `  <kw>const</kw> total <op>=</op> nums.<fn>reduce</fn>((sum, n) <op>=></op> sum <op>+</op> n, <num>0</num>);` },
-  { text: `  <kw>return</kw> <fn>parseFloat</fn>((total <op>/</op> nums.length).<fn>toFixed</fn>(<num>2</num>));` },
-  { text: `};` },
-  { text: ``, id: null },
-  { text: `<kw>function</kw> <fn>printStudent</fn>(s) {` },
-  { text: `  console.<fn>log</fn>(<str>\`[\${</str>s.id<str>}] \${</str>s.name<str>} | City: \${</str>s.address.city<str>}\`</str>);` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>function</kw> <fn>getFirstItem</fn>(arr) {   <span class="cmt">// Generic T erased</span>` },
-  { text: `  <kw>return</kw> arr[<num>0</num>];` },
-  { text: `}` },
-  { text: ``, id: null },
-  { text: `<kw>function</kw> <fn>enrollStudent</fn>(name, course <op>=</op> <str>"General"</str>) {` },
-  { text: `  <kw>return</kw> <str>\`\${</str>name<str>} enrolled in \${</str>course<str>}\`</str>;` },
-  { text: `}` },
-];
+    function renderCode(data) {
+      const scroll = document.getElementById('codeScroll');
+      const pre = document.createElement('pre');
+      data.forEach((line, i) => {
+        const div = document.createElement('div');
+        div.className = 'code-line';
+        if (line.id) { div.id = line.id; lineIds[line.id] = div; }
+        const span = document.createElement('span');
+        span.innerHTML = line.text || '';
+        div.appendChild(span);
+        pre.appendChild(div);
+      });
+      scroll.innerHTML = '';
+      scroll.appendChild(pre);
+    }
 
-// ── TAB SWITCHING ──────────────────────────────────────────────
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.toggle('active', (tab === 'ts' && i === 0) || (tab === 'js' && i === 1));
+      });
+      renderCode(tab === 'ts' ? TS_CODE : JS_CODE);
 
-let currentTab = 'ts';
-const lineIds = {};
+      // Animate compile steps
+      const steps = ['s1', 's2', 's3', 's4'];
+      steps.forEach(s => document.getElementById(s).classList.remove('done'));
+      if (tab === 'ts') {
+        document.getElementById('s1').classList.add('done');
+      } else {
+        steps.forEach(s => document.getElementById(s).classList.add('done'));
+      }
+    }
 
-function renderCode(data) {
-  const scroll = document.getElementById('codeScroll');
-  const pre = document.createElement('pre');
-  data.forEach((line, i) => {
-    const div = document.createElement('div');
-    div.className = 'code-line';
-    if (line.id) { div.id = line.id; lineIds[line.id] = div; }
-    const span = document.createElement('span');
-    span.innerHTML = line.text || '';
-    div.appendChild(span);
-    pre.appendChild(div);
-  });
-  scroll.innerHTML = '';
-  scroll.appendChild(pre);
-}
+    function jumpTo(id) {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
-function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', (tab === 'ts' && i === 0) || (tab === 'js' && i === 1));
-  });
-  renderCode(tab === 'ts' ? TS_CODE : JS_CODE);
+    // ── CONSOLE RUNNER ─────────────────────────────────────────────
 
-  // Animate compile steps
-  const steps = ['s1','s2','s3','s4'];
-  steps.forEach(s => document.getElementById(s).classList.remove('done'));
-  if (tab === 'ts') {
-    document.getElementById('s1').classList.add('done');
-  } else {
-    steps.forEach(s => document.getElementById(s).classList.add('done'));
-  }
-}
+    function fmt(val) {
+      if (val === null) return `<span class="log-null">null</span>`;
+      if (val === undefined) return `<span class="log-null">undefined</span>`;
+      if (typeof val === 'string') return `<span class="log-str">"${val}"</span>`;
+      if (typeof val === 'number') return `<span class="log-num">${val}</span>`;
+      if (typeof val === 'boolean') return `<span class="log-bool">${val}</span>`;
+      if (Array.isArray(val)) return `[${val.map(fmt).join(', ')}]`;
+      if (typeof val === 'object') {
+        const entries = Object.entries(val).map(([k, v]) =>
+          `<span class="log-key">${k}</span>: ${fmt(v)}`).join(', ');
+        return `{ ${entries} }`;
+      }
+      return String(val);
+    }
 
-function jumpTo(id) {
-  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
+    function addLine(html) {
+      const out = document.getElementById('consoleOutput');
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      div.innerHTML = `<span class="prompt">&gt;</span> ${html}`;
+      out.appendChild(div);
+      out.scrollTop = out.scrollHeight;
+    }
 
-// ── CONSOLE RUNNER ─────────────────────────────────────────────
+    function addSection(title) {
+      const out = document.getElementById('consoleOutput');
+      const div = document.createElement('div');
+      div.className = 'log-section';
+      div.textContent = `▸ ${title}`;
+      out.appendChild(div);
+    }
 
-function fmt(val) {
-  if (val === null) return `<span class="log-null">null</span>`;
-  if (val === undefined) return `<span class="log-null">undefined</span>`;
-  if (typeof val === 'string') return `<span class="log-str">"${val}"</span>`;
-  if (typeof val === 'number') return `<span class="log-num">${val}</span>`;
-  if (typeof val === 'boolean') return `<span class="log-bool">${val}</span>`;
-  if (Array.isArray(val)) return `[${val.map(fmt).join(', ')}]`;
-  if (typeof val === 'object') {
-    const entries = Object.entries(val).map(([k,v]) =>
-      `<span class="log-key">${k}</span>: ${fmt(v)}`).join(', ');
-    return `{ ${entries} }`;
-  }
-  return String(val);
-}
+    function clearConsole() {
+      document.getElementById('consoleOutput').innerHTML =
+        '<div style="color:var(--muted);font-size:11px;padding:8px 0;">Console cleared. Click ▶ Run Code to execute again.</div>';
+    }
 
-function addLine(html) {
-  const out = document.getElementById('consoleOutput');
-  const div = document.createElement('div');
-  div.className = 'log-line';
-  div.innerHTML = `<span class="prompt">&gt;</span> ${html}`;
-  out.appendChild(div);
-  out.scrollTop = out.scrollHeight;
-}
+    function runCode() {
+      // Animate to JS tab
+      switchTab('js');
 
-function addSection(title) {
-  const out = document.getElementById('consoleOutput');
-  const div = document.createElement('div');
-  div.className = 'log-section';
-  div.textContent = `▸ ${title}`;
-  out.appendChild(div);
-}
+      const out = document.getElementById('consoleOutput');
+      out.innerHTML = '';
 
-function clearConsole() {
-  document.getElementById('consoleOutput').innerHTML =
-    '<div style="color:var(--muted);font-size:11px;padding:8px 0;">Console cleared. Click ▶ Run Code to execute again.</div>';
-}
+      // ── Execute the actual assignment code ──
 
-function runCode() {
-  // Animate to JS tab
-  switchTab('js');
+      // Primitives
+      let studentName = "Hassan Javed";
+      let studentAge = 20;
+      let isEnrolled = true;
+      let uniqueId = null;
+      let futureScore = undefined;
 
-  const out = document.getElementById('consoleOutput');
-  out.innerHTML = '';
+      addSection('1. PRIMITIVE TYPES');
+      addLine(`studentName <span class="log-key">(string)</span>    = ${fmt(studentName)}`);
+      addLine(`studentAge  <span class="log-key">(number)</span>    = ${fmt(studentAge)}`);
+      addLine(`isEnrolled  <span class="log-key">(boolean)</span>   = ${fmt(isEnrolled)}`);
+      addLine(`uniqueId    <span class="log-key">(null)</span>      = ${fmt(uniqueId)}`);
+      addLine(`futureScore <span class="log-key">(undefined)</span> = ${fmt(futureScore)}`);
 
-  // ── Execute the actual assignment code ──
+      // Type alias
+      const myResult = { course: "TS-101", score: 88, grade: "A" };
+      addSection('2. TYPE ALIAS — Result');
+      addLine(`myResult = ${fmt(myResult)}`);
 
-  // Primitives
-  let studentName = "Hassan Javed";
-  let studentAge = 20;
-  let isEnrolled = true;
-  let uniqueId = null;
-  let futureScore = undefined;
+      // Interface
+      const student1 = {
+        id: 1, name: "Hassan Javed", age: 20, enrolled: true,
+        address: { city: "Karachi", country: "Pakistan" },
+        courses: ["TypeScript", "React", "Node.js"], grade: "A"
+      };
+      addSection('3. INTERFACE — Student');
+      addLine(`student1 = ${fmt(student1)}`);
 
-  addSection('1. PRIMITIVE TYPES');
-  addLine(`studentName <span class="log-key">(string)</span>    = ${fmt(studentName)}`);
-  addLine(`studentAge  <span class="log-key">(number)</span>    = ${fmt(studentAge)}`);
-  addLine(`isEnrolled  <span class="log-key">(boolean)</span>   = ${fmt(isEnrolled)}`);
-  addLine(`uniqueId    <span class="log-key">(null)</span>      = ${fmt(uniqueId)}`);
-  addLine(`futureScore <span class="log-key">(undefined)</span> = ${fmt(futureScore)}`);
+      // Arrays
+      const scores = [85, 92, 78, 95, 88];
+      const subjects = ["Math", "English", "Physics"];
+      const results = [
+        { course: "TS-101", score: 88, grade: "A" },
+        { course: "JS-202", score: 74, grade: "B" },
+        { course: "PY-303", score: 60, grade: "C" },
+      ];
+      addSection('4. ARRAYS');
+      addLine(`scores   (number[])   = ${fmt(scores)}`);
+      addLine(`subjects (string[])   = ${fmt(subjects)}`);
+      addLine(`results  (Result[])   = ${fmt(results)}`);
 
-  // Type alias
-  const myResult = { course: "TS-101", score: 88, grade: "A" };
-  addSection('2. TYPE ALIAS — Result');
-  addLine(`myResult = ${fmt(myResult)}`);
+      // Object
+      const course = { id: "TS-101", title: "TypeScript Fundamentals", credits: 3 };
+      addSection('5. OBJECT');
+      addLine(`course = ${fmt(course)}`);
 
-  // Interface
-  const student1 = {
-    id: 1, name: "Hassan Javed", age: 20, enrolled: true,
-    address: { city: "Karachi", country: "Pakistan" },
-    courses: ["TypeScript", "React", "Node.js"], grade: "A"
-  };
-  addSection('3. INTERFACE — Student');
-  addLine(`student1 = ${fmt(student1)}`);
+      // Functions
+      function greetStudent(name, age) {
+        return `Hello, ${name}! You are ${age} years old.`;
+      }
+      const calculateAverage = (nums) => {
+        const total = nums.reduce((sum, n) => sum + n, 0);
+        return parseFloat((total / nums.length).toFixed(2));
+      };
+      function printStudent(s) {
+        return `[${s.id}] ${s.name} | Age: ${s.age} | City: ${s.address.city}`;
+      }
+      function getFirstItem(arr) { return arr[0]; }
+      function enrollStudent(name, course = "General") {
+        return `${name} has been enrolled in ${course}.`;
+      }
 
-  // Arrays
-  const scores = [85, 92, 78, 95, 88];
-  const subjects = ["Math", "English", "Physics"];
-  const results = [
-    { course: "TS-101", score: 88, grade: "A" },
-    { course: "JS-202", score: 74, grade: "B" },
-    { course: "PY-303", score: 60, grade: "C" },
-  ];
-  addSection('4. ARRAYS');
-  addLine(`scores   (number[])   = ${fmt(scores)}`);
-  addLine(`subjects (string[])   = ${fmt(subjects)}`);
-  addLine(`results  (Result[])   = ${fmt(results)}`);
+      addSection('6. FUNCTIONS');
+      addLine(`greetStudent()        = ${fmt(greetStudent(studentName, studentAge))}`);
+      addLine(`calculateAverage()    = ${fmt(calculateAverage(scores))}`);
+      addLine(`printStudent()        = ${fmt(printStudent(student1))}`);
+      addLine(`getFirstItem&lt;string&gt;() = ${fmt(getFirstItem(subjects))}`);
+      addLine(`getFirstItem&lt;number&gt;() = ${fmt(getFirstItem(scores))}`);
+      addLine(`enrollStudent(Sara)   = ${fmt(enrollStudent("Sara"))}`);
+      addLine(`enrollStudent(Ahmed)  = ${fmt(enrollStudent("Ahmed", "TypeScript Advanced"))}`);
 
-  // Object
-  const course = { id: "TS-101", title: "TypeScript Fundamentals", credits: 3 };
-  addSection('5. OBJECT');
-  addLine(`course = ${fmt(course)}`);
+      // Done
+      const done = document.createElement('div');
+      done.style.cssText = 'color:var(--green);font-weight:700;margin-top:14px;font-size:11px;letter-spacing:1px;';
+      done.textContent = '✔ All code executed successfully in Chrome!';
+      out.appendChild(done);
+    }
 
-  // Functions
-  function greetStudent(name, age) {
-    return `Hello, ${name}! You are ${age} years old.`;
-  }
-  const calculateAverage = (nums) => {
-    const total = nums.reduce((sum, n) => sum + n, 0);
-    return parseFloat((total / nums.length).toFixed(2));
-  };
-  function printStudent(s) {
-    return `[${s.id}] ${s.name} | Age: ${s.age} | City: ${s.address.city}`;
-  }
-  function getFirstItem(arr) { return arr[0]; }
-  function enrollStudent(name, course = "General") {
-    return `${name} has been enrolled in ${course}.`;
-  }
-
-  addSection('6. FUNCTIONS');
-  addLine(`greetStudent()        = ${fmt(greetStudent(studentName, studentAge))}`);
-  addLine(`calculateAverage()    = ${fmt(calculateAverage(scores))}`);
-  addLine(`printStudent()        = ${fmt(printStudent(student1))}`);
-  addLine(`getFirstItem&lt;string&gt;() = ${fmt(getFirstItem(subjects))}`);
-  addLine(`getFirstItem&lt;number&gt;() = ${fmt(getFirstItem(scores))}`);
-  addLine(`enrollStudent(Sara)   = ${fmt(enrollStudent("Sara"))}`);
-  addLine(`enrollStudent(Ahmed)  = ${fmt(enrollStudent("Ahmed", "TypeScript Advanced"))}`);
-
-  // Done
-  const done = document.createElement('div');
-  done.style.cssText = 'color:var(--green);font-weight:700;margin-top:14px;font-size:11px;letter-spacing:1px;';
-  done.textContent = '✔ All code executed successfully in Chrome!';
-  out.appendChild(done);
-}
-
-// ── INIT ──────────────────────────────────────────────────────
-renderCode(TS_CODE);
-</script>
+    // ── INIT ──────────────────────────────────────────────────────
+    renderCode(TS_CODE);
+  </script>
 </body>
+
 </html>
+
+
+<!-- 
+ ============================================================
+  TypeScript Assignment — index.html (linked to style.css and assignment.ts)
+  Author: Hassan Javed © 2026
+ ============================================================ -->

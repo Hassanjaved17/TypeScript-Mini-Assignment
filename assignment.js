@@ -82,3 +82,9 @@ console.log("First Subject:", getFirstItem(subjects));
 console.log("First Score:", getFirstItem(scores));
 console.log(enrollStudent("Sara"));
 console.log(enrollStudent("Ahmed", "TypeScript Advanced"));
+
+
+// ============================================================
+//  TypeScript Assignment — assignment.js (compiled from assignment.ts)
+//  Author: Hassan Javed © 2026
+// ============================================================
